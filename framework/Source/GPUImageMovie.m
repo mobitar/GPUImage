@@ -304,25 +304,27 @@
         return;
     }
 
-    CMSampleBufferRef audioSampleBufferRef = [readerAudioTrackOutput copyNextSampleBuffer];
-    
-    if (audioSampleBufferRef) {
+    if (reader.status == AVAssetReaderStatusReading) {
+        CMSampleBufferRef audioSampleBufferRef = [readerAudioTrackOutput copyNextSampleBuffer];
         
-        if (self.playSound){
-            CFRetain(audioSampleBufferRef);
-            dispatch_async(audio_queue, ^{
-                [audioPlayer copyBuffer:audioSampleBufferRef];
-                
-                CFRelease(audioSampleBufferRef);
-            });
+        if (audioSampleBufferRef) {
             
-        } else if (self.audioEncodingTarget != nil && !audioEncodingIsFinished){
-            [self.audioEncodingTarget processAudioBuffer:audioSampleBufferRef];            
+            if (self.playSound){
+                CFRetain(audioSampleBufferRef);
+                dispatch_async(audio_queue, ^{
+                    [audioPlayer copyBuffer:audioSampleBufferRef];
+                    
+                    CFRelease(audioSampleBufferRef);
+                });
+                
+            } else if (self.audioEncodingTarget != nil && !audioEncodingIsFinished){
+                [self.audioEncodingTarget processAudioBuffer:audioSampleBufferRef];
+            }
+            
+            CFRelease(audioSampleBufferRef);
+        } else {
+            audioEncodingIsFinished = YES;
         }
-        
-        CFRelease(audioSampleBufferRef);
-    } else {
-        audioEncodingIsFinished = YES;
     }
 }
 
@@ -444,6 +446,7 @@
     
     if (audioPlayer != nil){
         [audioPlayer stopPlaying];
+        audioPlayer = nil;
     }
 }
 
