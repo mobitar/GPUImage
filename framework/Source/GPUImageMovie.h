@@ -34,6 +34,10 @@
  */
 @property(readwrite, nonatomic) BOOL playSound;
 
+/** This determines whether alwaysCopiesSampleData will be set on the AVAssetReaderTrackOutput (provide better performance for lower end devices). Defaults to YES.
+ */
+@property(readwrite, nonatomic) BOOL alwaysCopiesSampleData;
+
 
 /** This is used to send the delete Movie did complete playing alert
  */

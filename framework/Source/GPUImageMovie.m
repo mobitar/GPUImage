@@ -42,6 +42,7 @@
 
     self.url = url;
     self.asset = nil;
+    self.alwaysCopiesSampleData = YES;
 
     return self;
 }
@@ -57,6 +58,7 @@
 
     self.url = nil;
     self.asset = asset;
+    self.alwaysCopiesSampleData = YES;
 
     return self;
 }
@@ -144,6 +146,7 @@
     [outputSettings setObject: [NSNumber numberWithInt:kCVPixelFormatType_32BGRA]  forKey: (NSString*)kCVPixelBufferPixelFormatTypeKey];
     // Maybe set alwaysCopiesSampleData to NO on iOS 5.0 for faster video decoding
     AVAssetReaderTrackOutput *readerVideoTrackOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:[[self.asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] outputSettings:outputSettings];
+    readerVideoTrackOutput.alwaysCopiesSampleData = self.alwaysCopiesSampleData;
     [reader addOutput:readerVideoTrackOutput];
 
     AVAssetReaderTrackOutput *readerAudioTrackOutput = nil;
@@ -210,7 +213,7 @@
         while (reader.status == AVAssetReaderStatusReading && (!_shouldRepeat || keepLooping))
         {
             [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
-            
+
             if (shouldPlayAudio && (!audioEncodingIsFinished)){
                 
                 if (audioPlayer.readyForMoreBytes) {
@@ -249,7 +252,8 @@
     if (reader.status == AVAssetReaderStatusReading)
     {
         CMSampleBufferRef sampleBufferRef = [readerVideoTrackOutput copyNextSampleBuffer];
-        if (sampleBufferRef) 
+
+        if (sampleBufferRef)
         {
             BOOL renderVideoFrame = YES;
             
@@ -400,6 +404,8 @@
         
         glBindTexture(GL_TEXTURE_2D, outputTexture);
         // Using BGRA extension to pull in video frame data directly
+
+
         glTexImage2D(GL_TEXTURE_2D,
                      0,
                      self.outputTextureOptions.internalFormat,
