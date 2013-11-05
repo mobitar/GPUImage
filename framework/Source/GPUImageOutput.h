@@ -108,6 +108,7 @@ void reportAvailableMemoryForGPUImage(NSString *tag);
 - (void)removeAllTargets;
 
 - (void)addTargetOnCurrentQueue:(id<GPUImageInput>)newTarget;
+- (void)addTargetOnCurrentQueue:(id<GPUImageInput>)newTarget atTextureLocation:(NSInteger)textureLocation;
 - (void)removeTargetOnCurrentQueueWithoutReset:(id<GPUImageInput>)targetToRemove;
 - (void)removeAllTargetsOnCurrentQueueWithoutReset;
 

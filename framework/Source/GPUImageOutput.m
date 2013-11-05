@@ -48,7 +48,7 @@ void runAsynchronouslyOnVideoProcessingQueue(void (^block)(void))
 	}
 }
 
-void reportAvailableMemoryForGPUImage(NSString *tag) 
+void reportAvailableMemoryForGPUImage(NSString *tag)
 {    
     if (!tag)
         tag = @"Default";
@@ -249,6 +249,23 @@ void reportAvailableMemoryForGPUImage(NSString *tag)
         _targetToIgnoreForUpdates = newTarget;
     }
 }
+
+- (void)addTargetOnCurrentQueue:(id<GPUImageInput>)newTarget atTextureLocation:(NSInteger)textureLocation {
+    if([targets containsObject:newTarget])
+    {
+        return;
+    }
+
+    cachedMaximumOutputSize = CGSizeZero;
+    [self setInputTextureForTarget:newTarget atIndex:textureLocation];
+    [newTarget setTextureDelegate:self atIndex:textureLocation];
+    [targets addObject:newTarget];
+    [targetTextureIndices addObject:[NSNumber numberWithInteger:textureLocation]];
+
+    allTargetsWantMonochromeData = allTargetsWantMonochromeData && [newTarget wantsMonochromeInput];
+}
+
+
 
 - (void)removeTargetOnCurrentQueueWithoutReset:(id<GPUImageInput>)targetToRemove {
     if(![targets containsObject:targetToRemove])
