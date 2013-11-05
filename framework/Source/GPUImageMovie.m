@@ -122,7 +122,7 @@
     GPUImageMovie __block *blockSelf = self;
     
     [inputAsset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"tracks"] completionHandler: ^{
-        runSynchronouslyOnVideoProcessingQueue(^{
+//        runSynchronouslyOnVideoProcessingQueue(^{
             NSError *error = nil;
             AVKeyValueStatus tracksStatus = [inputAsset statusOfValueForKey:@"tracks" error:&error];
             if (!tracksStatus == AVKeyValueStatusLoaded)
@@ -132,7 +132,7 @@
             blockSelf.asset = inputAsset;
             [blockSelf processAsset];
             blockSelf = nil;
-        });
+//        });
     }];
 }
 
@@ -212,19 +212,20 @@
         assetStartTime = 0.0;
         while (reader.status == AVAssetReaderStatusReading && (!_shouldRepeat || keepLooping))
         {
-            [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
-
-            if (shouldPlayAudio && (!audioEncodingIsFinished)){
+            runSynchronouslyOnVideoProcessingQueue(^{
+                [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
                 
-                if (audioPlayer.readyForMoreBytes) {
-                    //process next audio sample if the player is ready to receive it
+                if (shouldPlayAudio && (!audioEncodingIsFinished)){
+                    
+                    if (audioPlayer.readyForMoreBytes) {
+                        //process next audio sample if the player is ready to receive it
+                        [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
+                    }
+                    
+                } else if (shouldRecordAudioTrack && (!audioEncodingIsFinished)) {
                     [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
                 }
-                
-            } else if (shouldRecordAudioTrack && (!audioEncodingIsFinished)) {
-                [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
-            }
-
+            });
         }
 
         if (reader.status == AVAssetWriterStatusCompleted) {
@@ -278,9 +279,9 @@
             
             if (renderVideoFrame){
                 __unsafe_unretained GPUImageMovie *weakSelf = self;
-                runSynchronouslyOnVideoProcessingQueue(^{
+//                runSynchronouslyOnVideoProcessingQueue(^{
                     [weakSelf processMovieFrame:sampleBufferRef];
-                });                
+//                });                
             }
             
             CMSampleBufferInvalidate(sampleBufferRef);
@@ -458,10 +459,12 @@
 
 - (void)cancelProcessing
 {
-    if (reader) {
-        [reader cancelReading];
-    }
-    [self endProcessing];
+    runSynchronouslyOnVideoProcessingQueue(^{
+        if (reader) {
+            [reader cancelReading];
+        }
+        [self endProcessing];
+    });
 }
 
 @end
