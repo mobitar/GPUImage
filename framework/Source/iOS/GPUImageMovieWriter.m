@@ -342,22 +342,26 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
             });
         }
 
-        if (!assetWriterAudioInput.readyForMoreMediaData)
-        {
-            NSLog(@"Had to drop an audio frame");
-            return;
-        }
+//        if (!assetWriterAudioInput.readyForMoreMediaData)
+//        {
+//            NSLog(@"Had to drop an audio frame");
+//            return;
+//        }
         
 //        NSLog(@"Recorded audio sample time: %lld, %d, %lld", currentSampleTime.value, currentSampleTime.timescale, currentSampleTime.epoch);
-        dispatch_async(movieWritingQueue, ^{
-            [assetWriterAudioInput appendSampleBuffer:audioBuffer];
-            
+//        dispatch_async(movieWritingQueue, ^{
+            if (assetWriterAudioInput.readyForMoreMediaData){
+                [assetWriterAudioInput appendSampleBuffer:audioBuffer];
+            } else {
+                NSLog(@"Had to drop an audio frame");
+            }
+
             if (_shouldInvalidateAudioSampleWhenDone)
             {
                 CMSampleBufferInvalidate(audioBuffer);
             }
             CFRelease(audioBuffer);
-        });
+//        });
     }
 }
 
