@@ -4,6 +4,8 @@
 
 extern NSString *const kGPUImageColorSwizzlingFragmentShaderString;
 
+extern NSString *const kGPUImageMovieWriterProgressNotification;
+
 @protocol GPUImageMovieWriterDelegate <NSObject>
 
 @optional
@@ -35,6 +37,8 @@ extern NSString *const kGPUImageColorSwizzlingFragmentShaderString;
     GPUImageRotationMode inputRotation;
     
     __unsafe_unretained id<GPUImageTextureDelegate> textureDelegate;
+    
+    NSInteger _writtenFrames;
 }
 
 @property(readwrite, nonatomic) BOOL hasAudioTrack;

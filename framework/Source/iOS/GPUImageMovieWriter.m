@@ -16,6 +16,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
  }
 );
 
+NSString *const kGPUImageMovieWriterProgressNotification = @"kGPUImageMovieWriterProgressNotification";
 
 @interface GPUImageMovieWriter ()
 {
@@ -250,6 +251,8 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
 	//    [assetWriter startWriting];
     
 	//    [assetWriter startSessionAtSourceTime:kCMTimeZero];
+    
+    _writtenFrames = 0;
 }
 
 - (void)startRecordingInOrientation:(CGAffineTransform)orientationTransform;
@@ -604,8 +607,11 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         {
             CVPixelBufferRelease(pixel_buffer);
         }
+        
+        _writtenFrames++;
+        NSDictionary *info = @{@"written_frames": @(_writtenFrames)};
+        [[NSNotificationCenter defaultCenter] postNotificationName:kGPUImageMovieWriterProgressNotification object:nil userInfo:info];
     });
-    
 }
 
 - (NSInteger)nextAvailableTextureIndex;
