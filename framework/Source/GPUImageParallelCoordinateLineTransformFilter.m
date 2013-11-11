@@ -176,7 +176,7 @@ NSString *const kGPUImageHoughAccumulationFBOReadFragmentShaderString = SHADER_S
     linePairsToRender = 0;
     unsigned int currentByte = 0;
     unsigned int lineStorageIndex = 0;
-    unsigned int maxLineStorageIndex = maxLinePairsToRender * 8 - 8;
+    unsigned int maxLineStorageIndex = (unsigned int)maxLinePairsToRender * 8 - 8;
     
     GLfloat minY = 100, maxY = -100, minX = 100, maxX = -100;
     while (currentByte < imageByteSize)
@@ -241,7 +241,7 @@ NSString *const kGPUImageHoughAccumulationFBOReadFragmentShaderString = SHADER_S
     }
     
 	glVertexAttribPointer(filterPositionAttribute, 2, GL_FLOAT, 0, 0, lineCoordinates);
-    glDrawArrays(GL_LINES, 0, (linePairsToRender * 4));
+    glDrawArrays(GL_LINES, 0, (unsigned int)(linePairsToRender * 4));
     
     if (![GPUImageContext deviceSupportsFramebufferReads])
     {

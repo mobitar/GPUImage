@@ -218,7 +218,7 @@ static OSStatus playbackCallback(void *inRefCon,
     CMBlockBufferRef blockBuffer;
     CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(buf, NULL, &abl, sizeof(abl), NULL, NULL, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &blockBuffer);
     
-    UInt32 size = CMSampleBufferGetTotalSampleSize(buf);
+    UInt32 size = (unsigned int)CMSampleBufferGetTotalSampleSize(buf);
     BOOL bytesCopied = TPCircularBufferProduceBytes(&circularBuffer, abl.mBuffers[0].mData, size);
     
     if (!bytesCopied){

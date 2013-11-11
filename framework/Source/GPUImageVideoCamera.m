@@ -557,8 +557,8 @@ NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString = SHAD
     
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     CVImageBufferRef cameraFrame = CMSampleBufferGetImageBuffer(sampleBuffer);
-    int bufferWidth = CVPixelBufferGetWidth(cameraFrame);
-    int bufferHeight = CVPixelBufferGetHeight(cameraFrame);
+    int bufferWidth = (int)CVPixelBufferGetWidth(cameraFrame);
+    int bufferHeight = (int)CVPixelBufferGetHeight(cameraFrame);
     
 	CMTime currentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
@@ -690,8 +690,8 @@ NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString = SHAD
         
         // Using BGRA extension to pull in video frame data directly
         // The use of bytesPerRow / 4 accounts for a display glitch present in preview video frames when using the photo preset on the camera
-        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(cameraFrame);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bytesPerRow / 4, bufferHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, CVPixelBufferGetBaseAddress(cameraFrame));
+        size_t bytesPerRow = (int)CVPixelBufferGetBytesPerRow(cameraFrame);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)bytesPerRow / 4, bufferHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, CVPixelBufferGetBaseAddress(cameraFrame));
         
         for (id<GPUImageInput> currentTarget in targets)
         {
