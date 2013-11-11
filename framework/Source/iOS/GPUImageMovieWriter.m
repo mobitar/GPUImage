@@ -707,11 +707,11 @@ NSString *const kGPUImageMovieWriterProgressNotification = @"kGPUImageMovieWrite
             
             AudioChannelLayout acl;
             bzero( &acl, sizeof(acl));
-            acl.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
+            acl.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
             
             audioOutputSettings = [NSDictionary dictionaryWithObjectsAndKeys:
                                          [ NSNumber numberWithInt: kAudioFormatMPEG4AAC], AVFormatIDKey,
-                                         [ NSNumber numberWithInt: 1 ], AVNumberOfChannelsKey,
+                                         [ NSNumber numberWithInt: 2 ], AVNumberOfChannelsKey,
                                          [ NSNumber numberWithFloat: preferredHardwareSampleRate ], AVSampleRateKey,
                                          [ NSData dataWithBytes: &acl length: sizeof( acl ) ], AVChannelLayoutKey,
                                          //[ NSNumber numberWithInt:AVAudioQualityLow], AVEncoderAudioQualityKey,
