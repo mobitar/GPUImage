@@ -464,6 +464,7 @@
     runSynchronouslyOnVideoProcessingQueue(^{
         if (reader) {
             [reader cancelReading];
+            reader = nil;
         }
         [self endProcessing];
     });
