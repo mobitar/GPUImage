@@ -198,13 +198,13 @@
     if (synchronizedMovieWriter != nil)
     {
         [synchronizedMovieWriter setVideoInputReadyCallback:^{
-            if (!weakSelf.pause) {
+            if (!weakSelf.paused) {
                 [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
             }
         }];
 
         [synchronizedMovieWriter setAudioInputReadyCallback:^{
-            if (!weakSelf.pause) {
+            if (!weakSelf.paused) {
                 [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
             }
         }];
@@ -217,7 +217,7 @@
         while (reader.status == AVAssetReaderStatusReading && (!_shouldRepeat || keepLooping))
         {
             runSynchronouslyOnVideoProcessingQueue(^{
-                if (!weakSelf.pause) {
+                if (!weakSelf.paused) {
                     [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
                 }
                 
@@ -229,7 +229,7 @@
                     }
                     
                 } else if (shouldRecordAudioTrack && (!audioEncodingIsFinished)) {
-                    if (!weakSelf.pause) {
+                    if (!weakSelf.paused) {
                         [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
                     }
                 }
