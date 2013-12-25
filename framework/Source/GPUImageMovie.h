@@ -38,6 +38,10 @@
  */
 @property(readwrite, nonatomic) BOOL alwaysCopiesSampleData;
 
+/** This enables to pause the movie while writing it or playing it without sound. (e.i. cann't be set to work with playSound=YES)
+ */
+@property(readwrite, nonatomic) BOOL pause;
+
 
 /** This is used to send the delete Movie did complete playing alert
  */

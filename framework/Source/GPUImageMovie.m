@@ -198,11 +198,15 @@
     if (synchronizedMovieWriter != nil)
     {
         [synchronizedMovieWriter setVideoInputReadyCallback:^{
-            [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
+            if (!weakSelf.pause) {
+                [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
+            }
         }];
 
         [synchronizedMovieWriter setAudioInputReadyCallback:^{
-            [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
+            if (!weakSelf.pause) {
+                [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
+            }
         }];
 
         [synchronizedMovieWriter enableSynchronizationCallbacks];
@@ -213,17 +217,21 @@
         while (reader.status == AVAssetReaderStatusReading && (!_shouldRepeat || keepLooping))
         {
             runSynchronouslyOnVideoProcessingQueue(^{
-                [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
+                if (!weakSelf.pause) {
+                    [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
+                }
                 
                 if (shouldPlayAudio && (!audioEncodingIsFinished)){
-                    
+                    // todo: pause audio according to pause the property
                     if (audioPlayer.readyForMoreBytes) {
                         //process next audio sample if the player is ready to receive it
                         [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
                     }
                     
                 } else if (shouldRecordAudioTrack && (!audioEncodingIsFinished)) {
-                    [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
+                    if (!weakSelf.pause) {
+                        [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
+                    }
                 }
             });
         }
