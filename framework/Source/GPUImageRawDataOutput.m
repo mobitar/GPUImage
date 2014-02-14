@@ -85,12 +85,6 @@
     dataTextureCoordinateAttribute = [dataProgram attributeIndex:@"inputTextureCoordinate"];
     dataInputTextureUniform = [dataProgram uniformIndex:@"inputImageTexture"];
     
-    // REFACTOR: Wrap this in a block for the image processing queue
-    [GPUImageContext setActiveShaderProgram:dataProgram];
-
-	glEnableVertexAttribArray(dataPositionAttribute);
-	glEnableVertexAttribArray(dataTextureCoordinateAttribute);
-
     return self;
 }
 
@@ -305,6 +299,9 @@
     glVertexAttribPointer(dataPositionAttribute, 2, GL_FLOAT, 0, 0, squareVertices);
 	glVertexAttribPointer(dataTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, textureCoordinates);
     
+    glEnableVertexAttribArray(dataPositionAttribute);
+	glEnableVertexAttribArray(dataTextureCoordinateAttribute);
+    
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
@@ -469,6 +466,16 @@
     else
     {
         return imageSize.width * 4;
+    }
+}
+
+- (void)setImageSize:(CGSize)newImageSize {
+    imageSize = newImageSize;
+    [self destroyDataFBO];
+    if (_rawBytesForImage != NULL && (![GPUImageContext supportsFastTextureUpload]))
+    {
+        free(_rawBytesForImage);
+        _rawBytesForImage = NULL;
     }
 }
 
